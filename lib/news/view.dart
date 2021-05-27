@@ -1,10 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:qabella/customDrawer/view.dart';
-import 'package:qabella/news/controller.dart';
-import 'package:qabella/news/model.dart';
+import 'package:qabella/news/newsModel.dart';
 import 'package:qabella/newsDetails/view.dart';
 import 'package:qabella/widgets/appBar.dart';
 import 'package:qabella/widgets/colors.dart';
+import 'package:qabella/widgets/network.dart';
 
 class NewsView extends StatefulWidget {
   @override
@@ -12,10 +13,11 @@ class NewsView extends StatefulWidget {
 }
 
 class _NewsViewState extends State<NewsView> {
+  NetWork util = NetWork();
   NewsModel _newsModel = NewsModel();
-  NewsController _newsController = NewsController();
-  bool _loading = false;
-  String a, b, c, d, f;
+  bool _loading = true;
+  String id;
+  String title, description, publisherName, image, date;
 
   
   var _listOfNews = [
@@ -45,6 +47,7 @@ class _NewsViewState extends State<NewsView> {
       'newImage': 'newsimage.png',
     },
   ];
+  
   @override
   Widget build(BuildContext context) {
     return Directionality(

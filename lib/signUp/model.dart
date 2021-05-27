@@ -1,4 +1,4 @@
-class SignUpModel {
+class UserModel {
   int key;
   Data data;
   String token;
@@ -6,7 +6,7 @@ class SignUpModel {
   String msg;
   bool status;
 
-  SignUpModel(
+  UserModel(
       {this.key,
       this.data,
       this.token,
@@ -14,7 +14,7 @@ class SignUpModel {
       this.msg,
       this.status});
 
-  SignUpModel.fromJson(Map<String, dynamic> json) {
+  UserModel.fromJson(Map<String, dynamic> json) {
     key = json['key'];
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;
     token = json['token'];

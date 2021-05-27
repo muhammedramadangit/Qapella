@@ -1,10 +1,13 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:qabella/addNew/addNewModel.dart';
 import 'package:qabella/addSuccessful/view.dart';
 import 'package:qabella/customDrawer/view.dart';
 import 'package:qabella/widgets/addNewTextFeild.dart';
 import 'package:qabella/widgets/appBar.dart';
 import 'package:qabella/widgets/button.dart';
 import 'package:qabella/widgets/colors.dart';
+import 'package:qabella/widgets/network.dart';
 
 class AddNew extends StatefulWidget {
   @override
@@ -12,6 +15,47 @@ class AddNew extends StatefulWidget {
 }
 
 class _AddNewState extends State<AddNew> {
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  AddNewModel _addNewModel = AddNewModel();
+  bool _isLoading = false;
+  String firstName, fatherName, grandFatherName, lastName, surName, phone;
+
+  void _submitForm() async {
+    if (!_formKey.currentState.validate()) {
+      return;
+    }
+    _formKey.currentState.save();
+    setState(() {
+      _isLoading = true;
+    });
+
+    NetWork utile = NetWork();
+
+    FormData body = FormData.fromMap({
+      "firstName": firstName,
+      "fatherName": fatherName,
+      "grandFatherName": grandFatherName,
+      "lastName": lastName,
+      "surName": surName,
+      "phone": phone,
+      "lang": "ar",
+    });
+
+    _addNewModel = await utile.postData(formData: body, url: "AddFriend");
+    if (_addNewModel.key != 0) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (_) => AddedSuccesses()));
+    } else {
+      Scaffold.of(context).showSnackBar(
+        SnackBar(content: Text(_addNewModel.msg)),
+      );
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -43,6 +87,7 @@ class _AddNewState extends State<AddNew> {
                   ),
                 ),
                 child: Form(
+                  key: _formKey,
                   child: ListView(
                     children: [
                       addNewTextField(
@@ -57,6 +102,11 @@ class _AddNewState extends State<AddNew> {
                             return null;
                           }
                         },
+                        onSaved: (value) {
+                          setState(() {
+                            value = firstName;
+                          });
+                        }
                       ),
                       addNewTextField(
                         title: 'اسم الأب',
@@ -70,6 +120,11 @@ class _AddNewState extends State<AddNew> {
                             return null;
                           }
                         },
+                        onSaved: (value) {
+                          setState(() {
+                            value = fatherName;
+                          });
+                        }
                       ),
                       addNewTextField(
                         title: 'اسم الجد',
@@ -83,6 +138,11 @@ class _AddNewState extends State<AddNew> {
                             return null;
                           }
                         },
+                        onSaved: (value) {
+                          setState(() {
+                            value = grandFatherName;
+                          });
+                        }
                       ),
                       addNewTextField(
                         title: 'جد الأب',
@@ -96,6 +156,11 @@ class _AddNewState extends State<AddNew> {
                             return null;
                           }
                         },
+                        onSaved: (value) {
+                          setState(() {
+                            value = lastName;
+                          });
+                        }
                       ),
                       addNewTextField(
                         title: 'اللقب',
@@ -109,6 +174,11 @@ class _AddNewState extends State<AddNew> {
                             return null;
                           }
                         },
+                        onSaved: (value) {
+                          setState(() {
+                            value = surName;
+                          });
+                        }
                       ),
                       addNewTextField(
                         title: 'رقم الجوال',
@@ -122,16 +192,18 @@ class _AddNewState extends State<AddNew> {
                             return null;
                           }
                         },
+                        onSaved: (value) {
+                          setState(() {
+                            value = phone;
+                          });
+                        }
                       ),
                       SizedBox(height: MediaQuery.of(context).size.height / 12),
                       customButton(
                         context: context,
                         title: 'إرسال',
                         onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => AddedSuccesses()));
+                          _submitForm();
                         },
                       )
                     ],

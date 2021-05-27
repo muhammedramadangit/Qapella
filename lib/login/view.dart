@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:qabella/home/view.dart';
 import 'package:qabella/login/controller.dart';
@@ -6,6 +7,7 @@ import 'package:qabella/signUp/view.dart';
 import 'package:qabella/widgets/button.dart';
 import 'package:qabella/widgets/chechbox.dart';
 import 'package:qabella/widgets/colors.dart';
+import 'package:qabella/widgets/network.dart';
 import 'package:qabella/widgets/textfield.dart';
 
 class LoginView extends StatefulWidget {
@@ -28,8 +30,21 @@ class _LoginViewState extends State<LoginView> {
     setState(() {
       _loading = true;
     });
-    _loginModel = await _loginController.userLogin(fullName, phoneNumber);
-    if (_loginModel.key != 0) {
+
+    NetWork util = NetWork();
+
+    FormData body = FormData.fromMap({
+      "fullName" : fullName,
+      "phoneNumber" : phoneNumber,
+      "lang" : "ar",
+      "deviceId" : "arcztft7gyhuj8ihge3d4rftg6yh7u",
+    });
+
+    _loginModel = await util.postData(formData: body, url: "Login").catchError((onError)=>print(onError));
+
+    print(_loginModel.msg);
+
+    if (_loginModel.data != null && _loginModel.status == 200) {
       Navigator.push(context, MaterialPageRoute(builder: (_) => HomeView()));
     } else {
       Scaffold.of(context).showSnackBar(
